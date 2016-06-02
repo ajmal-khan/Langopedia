@@ -19,7 +19,7 @@ public class MyDictionary {
 	}// method main ends here.
 
 	private static void checkInputInDictionary(String input, HashMap<String, String> dictionary) {
-		input = input.toLowerCase().trim();
+		//input = input.toLowerCase().trim();
 
 		if("q".equals(input)){
 			System.out.println("Bye bye");
@@ -55,10 +55,9 @@ public class MyDictionary {
 	private static String getInput(Scanner keyboard) {
 		System.out.println(
 				"To quit press q on you keyboard.\n\n Please enter the word you are looking for in the dictionary.");
-		String input = keyboard.nextLine().toLowerCase().trim().replace(" ", "");// removing
-																					// the
-																					// white
-																					// spaces.
+		//removing the white spaces
+		//String input = keyboard.nextLine().toLowerCase().trim().replace(" ", "");
+		String input = keyboard.nextLine().trim();
 		return input;
 	}
 
