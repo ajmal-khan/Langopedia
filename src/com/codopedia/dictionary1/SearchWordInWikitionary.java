@@ -3,12 +3,14 @@ package com.codopedia.dictionary1;
 
 import de.tudarmstadt.ukp.jwktl.api.WiktionaryFormatter;
 import de.tudarmstadt.ukp.jwktl.api.util.GrammaticalGender;
+import de.tudarmstadt.ukp.jwktl.api.util.IWiktionaryIterator;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import de.tudarmstadt.ukp.jwktl.JWKTL;
 import de.tudarmstadt.ukp.jwktl.api.IPronunciation;
@@ -28,314 +30,290 @@ public class SearchWordInWikitionary {
 	String formatedEntry = "";
 
 	public void searchInWiktionary(String wordToSearch) {
-		
+
 		/****************************************************************************************************/
 
 		IWiktionaryEdition wkt = JWKTL.openEdition(parsedDump);
-
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/* Query by word form. - Returns the page with the given title. The method only returns the page if its title
-		 *  matches exactly. Use getPagesForWord(String, boolean) for case insensitive and string-normalized matching.
+		/*
+		 * Query by word form. - Returns the page with the given title. The
+		 * method only returns the page if its title matches exactly. Use
+		 * getPagesForWord(String, boolean) for case insensitive and
+		 * string-normalized matching.
 		 */
-		//case insensitive
-		//List<IWiktionaryPage> pages = wkt.getPagesForWord(wordToSearch, true)
+		// case insensitive
+		// List<IWiktionaryPage> pages = wkt.getPagesForWord(wordToSearch, true)
 
-		//System.out.println(WiktionaryFormatter.instance().formatHeader(page));
+		// System.out.println(WiktionaryFormatter.instance().formatHeader(page));
 		System.out.println("*******************************************************");
 		IWiktionaryPage page = wkt.getPageForWord(wordToSearch);
 		// Access by page.
 		List<IWiktionaryEntry> entriesOnThisPage = null;
-		
-		if(page != null){
-			entriesOnThisPage = page.getEntries();//never null
+
+		if (page != null) {
+			entriesOnThisPage = page.getEntries();// never null
 			printSyntacticFuntion(wkt, wordToSearch, entriesOnThisPage);
-		}else{
+		} else {
 			System.out.println("\n=====>No page contains (" + wordToSearch + ") : ");
 			wkt.close();
 			return;
 		}
 		System.out.println("*******************************************************");
 		///////////////////////////////////////////////////////////////////////////////////////////
-	
+
 		IWiktionaryEntry entry = null;
-		if(entriesOnThisPage != null && entriesOnThisPage.size() > 0){
+		if (entriesOnThisPage != null && entriesOnThisPage.size() > 0) {
 			entry = entriesOnThisPage.get(0);
 		}
-		
+
 		// Enumerate senses i.e, meaning of the wordToSearch.
-		if(entry != null){
-			
-			printPronunciation(entry, wordToSearch);
+		if (entry != null) {
+
+			printPronunciation(entry, wkt);
 			System.out.println("*******************************************************");
-			printGender(entry, wordToSearch);
+			printGender(entry);
 			System.out.println("*******************************************************");
-			
+
 			printMeanings(entry, wordToSearch);
 			System.out.println("*******************************************************");
-			 List<IWikiString> usagesOfTheWordToSearch = entry.getExamples();
+			List<IWikiString> usagesOfTheWordToSearch = entry.getExamples();
 			printUsages(wordToSearch, usagesOfTheWordToSearch);
+		} // if entry != null ends here.
 
-
-
-
-		}//if entry != null ends here.
-			
-//		// Access first sense.
-//		IWiktionarySense sense = entry.getSense(1);
-//		System.out.println(WiktionaryFormatter.instance().formatHeader(sense));
-//
-//		// Access second sense.
-//		sense = entry.getSense(2);
-//		System.out.println(WiktionaryFormatter.instance().formatHeader(sense));
 		System.out.println("************************************************************************");
 		wkt.close();
-		//iwc.close();
-		
-		/****************************************************************************************************/
-		// IWiktionaryEntryFilter filter;
-		//////////////////////////////////////////////////////////////////////////////////////////////
-
-		
-//		List<IWiktionaryPage> pages = iwc.getPagesForWord(wordToSearch, true);
-//
-//		if(pages != null && pages.size() > 0){
-//			pages.forEach(page -> {
-//				pageText += page.getTitle().toString().trim() + "\n\n";
-//			});
-//		}
-//		System.out.println("Text of the pages that contain (" + wordToSearch + ") :");
-//		System.out.println(pageText);
-//
-//		
-//		System.out.print("Sentences contianing (" + wordToSearch + ") are:\n");
-//		entries.forEach(entry -> {
-//			entry.getExamples().stream().forEach(example -> {
-//				if(!"".equals(example))
-//					System.out.print("\n" +example.getPlainText().trim());
-//			});
-//		});
-//		
-//		/* Returns the grammatical gender of this lexical entry, which can be one of masculine, feminine, neuter. If no gender is specified, null is returned.*/
-//		if(entries.size() > 0 && entries.get(0).getGender() != null){
-//			System.out.print("Gender for (" + wordToSearch + ") :\n");
-//			System.out.println(entries.get(0).getGender().toString());
-//		}
-//		
-//		
-//		//iwc.close();
-//
-//		//////////////////////////////////////////////////////////////////////////////////////////////
-//		IWiktionaryEdition wkt = JWKTL.openEdition(parsedDump);
-//		List<IWiktionaryEntry> definitionEntries = wkt.getEntriesForWord(wordToSearch, true);
-//
-//		definitionEntries.stream().forEach(entry -> {
-//			printEntry(wordToSearch, entry);
-//		});
-//
-//		wkt.close();
-//
-//	}// method searchInWiktionary ends here.
-//
-//	private void printEntry(String wordToSearch, IWiktionaryEntry entry) {
-//
-//		System.out.println("\nYOU SEARCHED FOR : (" + entry.getWord().trim() + ")");
-//
-//		System.out.println("");
-//		
-//		/* entry.getGender() Returns the grammatical gender of this lexical entry, which can be one of masculine, feminine, neuter.
-//		If no gender is specified, null is returned.*/
-//		
-//		if(entry.getGender() != null){
-//			System.out.println("Gender of (" + wordToSearch.trim() + ") : \n");
-//			String grammaticalGender = entry.getGender().toString();
-//			System.out.println(grammaticalGender);
-//		}
-//
-//
-//		System.out.println("");
-//
-//		List<IPronunciation> pronunciation = entry.getPronunciations();
-//		if (pronunciation != null && pronunciation.size() > 0) {
-//			System.out.println("Pronuciations for  (" + wordToSearch.trim() + ") : ");
-//			pronunciation.stream().forEach(pronun -> System.out.println(pronun.getText().trim().toString()));
-//		}
-//
-//		System.out.println("");
-//		
-//		//The resulted list is never null and includes at least one element.
-//			entry.getPartsOfSpeech().stream().forEach(pos -> {
-//				partsOfSpeech = pos.toString() + "\t";
-//			});
-//			System.out.println(partsOfSpeech);
-//
-//		
-//		System.out.println("");
-//		
-//		pageAuthor = (entry.getPage().getAuthor() != null ? entry.getPage().getAuthor().toString() : "Not available");
-//		System.out.println("Author of the page containing (" + wordToSearch.trim() + ") : " + pageAuthor);
-//		
-//		System.out.println("");
-//		
-//		languageISO639_3Code = entry.getPage().getEntryLanguage().getISO639_3().toString();
-//		pageLanuage = entry.getPage().getEntryLanguage().toString();
-//		System.out.println("ISO639_3Code for the language of the page with (" + wordToSearch.trim() + ") : " + languageISO639_3Code);
-//		System.out.println("Language of the page with (" + wordToSearch.trim() + ") : " + pageLanuage);
-//		
-//		System.out.println("");
-//		
-//		pageLastEditedDate = entry.getPage().getTimestamp().toString();
-//		System.out.println("Page containing (" + wordToSearch.trim() + ") was last time edited on : "+ pageLastEditedDate);
-//
-//		System.out.println("");
-//
-//		List<IQuotation> quotations = entry.getQuotations();
-//		// The list is never null but might be empty.
-//		if (quotations.size() > 0) {
-//			System.out.println("Quoations for (" + wordToSearch.trim() + ") are: ");
-//			quotations.forEach(quotation -> {
-//				quotation.getLines().stream().forEach(quotationText -> {
-//					quotationText.getPlainText();
-//				});
-//			});
-//		}
-//
-//		System.out.println("");
-//
-//		List<IWikiString> entryExamples = entry.getExamples();
-//		// The list is never null but might be empty.
-//		if (entryExamples.size() > 0) {
-//			System.out.println("All sense definitions of the entry's senses (including the unassigned sense) are :\n");
-//			entryExamples.stream().forEach(senseDef -> {
-//				senseDef.getPlainText();
-//			});
-//		}else{
-//			System.out.println("No sense definition found for this entry when using the entry.getExamples()");
-//		}
-//
-//		System.out.println("");
-//		
-//		entrySenses = entry.getSenses();
-//		//The list is never null nor empty.
-//		System.out.println("Here are all the senses for (" + wordToSearch.trim() + ") : "); 
-//		entrySenses.forEach(sense -> {
-//			if (sense.getExamples() != null) {
-//				sense.getExamples().stream().forEach(s -> {
-//					s.getPlainText();
-//				});
-//			}
-//		});
-//		
-//		System.out.println("");
-//
-//		List<IWikiString> entryReferences = entry.getReferences();
-//		// The list is never null but might be empty.
-//		if (entryReferences.size() > 0) {
-//			System.out.println("Refrences for (" + wordToSearch.trim() + ") : \n");
-//			entryReferences.forEach(ref -> {
-//				ref.getPlainText();
-//			});
-//		}else{
-//			System.out.println("No references found when using the entryReferences.stream.forEach...ref.getPlainText()");
-//		}
-//
-//		System.out.println("");
-
+		// pageLastEditedDate = entry.getPage().getTimestamp().toString();
+		// System.out.println("Page containing (" + wordToSearch.trim() + ") was
+		// last time edited on : "+ pageLastEditedDate);
 	}// method printEntry ends here.
 
-	private void printGender(IWiktionaryEntry entry, String wordToSearch) {
+	private void printGender(IWiktionaryEntry entry) {
 
 		String genderOfWordToSearch = entry.getGender() != null ? entry.getGender().toString() : null;
-		if(genderOfWordToSearch != null){
-			System.out.println("Gender of the word (" + wordToSearch + ") : " + entry.getGender().toString());
-		}else{
-			System.out.println("No gender found for (" + wordToSearch + ".)");
+		if (genderOfWordToSearch != null) {
+			System.out.println("Gender of the word (" + entry.getWord() + ") : " + entry.getGender().toString());
+		} else {
+			System.out.println("No gender found for (" + entry.getWord() + ").");
 		}
-	
-	}//method printGender ends here.
 
-	private void printPronunciation(IWiktionaryEntry entry, String wordToSearch) {
-		List<String> pronunciationsList = new ArrayList<>();
-		List<IPronunciation> pronunciation = entry.getPronunciations();
-		if (pronunciation != null && pronunciation.size() > 0) {
-			pronunciation.stream().forEach(pronun -> pronunciationsList.add(pronun.getText()));
+	}// method printGender ends here.
+
+	private void printPronunciation(IWiktionaryEntry entry, IWiktionaryEdition wkt) {
+		// A word might have more than one pronunciations.
+		System.out.println("Pronuciation(s) for  (" + entry.getWord() + ") : ");
+		if (entry.getWord().trim().contains(" ")) {
+			// pronounceMultipleWords(entry, wkt);
+			pForNwordsOnNlines(entry, wkt);
+		} else {
+			pronounceSingleWord(entry);
 		}
-		if(pronunciationsList.size() > 0){
-			System.out.println("Pronuciations for  (" + wordToSearch.trim() + ") : ");
-			pronunciationsList.forEach(p -> System.out.println(p));
+	}// method printPronunciation ends here.
 
-		}else{
-			System.out.println("No pronuncation found for (" + wordToSearch + ").");
+	private void pForNwordsOnNlines(IWiktionaryEntry entry, IWiktionaryEdition wkt) {
+		List<List<String>> listOfListsOfPronun = new ArrayList<>();
+		// List<String> listOfPronunciations = new ArrayList<>();
+		giveListOfListsOfPronunciations(entry, wkt, listOfListsOfPronun);
+		List<Stack<String>> listOfStacks = giveListOfStacks(listOfListsOfPronun);
+		int numSentences = getSizeOfListWithMaxPronunciations(listOfListsOfPronun);
+		String allLines = "";
+		for (int i = 0; i < numSentences; i++) {
+			String ithLine = printOneLineFromStacks(listOfStacks);
+			allLines += ithLine + "\n";
 		}
-		
-	}//method printPronunciation ends here.
+		System.out.println(allLines);
+	}// method pronounceMultipleWords ends here.
 
-	private void printUsages(String wordToSearch, List<IWikiString> usagesOfTheWordToSearch) {
-		List<String> usagesList= new ArrayList<>();
-		 if( usagesOfTheWordToSearch != null && usagesOfTheWordToSearch.size() > 0){
-				for (IWikiString entryExample : usagesOfTheWordToSearch) {
-					if(entryExample != null && !"".equals(entryExample)){
-						usagesList.add(entryExample.getPlainText().trim());
+	private String printOneLineFromStacks(List<Stack<String>> listOfStacks) {
+		String ithLine = "";
+		for (Stack<String> stack : listOfStacks) {
+			if (!stack.isEmpty()) {
+				String nthPronun = "";
+				if (stack.size() >= 2) {
+					String temp = stack.pop();
+					nthPronun += temp;
+				} else if (stack.size() == 1) {
+					String temp = stack.peek();
+					nthPronun += temp;
+				}
+				ithLine += " " + nthPronun.trim();
+
+				// linesOfPronunciationsList.add(new String(nthPrronun.trim()));
+			}
+		}
+		return ithLine.trim();
+	}// method printOneLineFromStacks ends here.
+
+	private List<Stack<String>> giveListOfStacks(List<List<String>> listOfListsOfPronun) {
+
+		List<Stack<String>> listOfStacks = new ArrayList<>();
+		for (List<String> listOfP : listOfListsOfPronun) {
+			Stack<String> thisStack = new Stack<String>();
+			listOfP.forEach(p -> thisStack.push(new String(p)));
+			listOfStacks.add(thisStack);
+		}
+		return listOfStacks;
+	}// method giveListOfStacks ends here.
+
+	private int getSizeOfListWithMaxPronunciations(List<List<String>> listOfListsOfPronun) {
+		int sizeOfLargestList = 0;
+		for (List<String> list : listOfListsOfPronun) {
+			sizeOfLargestList = list.size() > sizeOfLargestList ? list.size() : sizeOfLargestList;
+		}
+		return sizeOfLargestList;
+	}// method getSizeOfListWithMaxPronunciations ends here.
+
+	private void giveListOfListsOfPronunciations(IWiktionaryEntry entry, IWiktionaryEdition wkt,
+			List<List<String>> listOfListsOfPronun) {
+		String[] wordsToSearch = entry.getWord().trim().split(" ");
+		IWiktionaryPage page2 = null;
+
+		for (int i = 0; i < wordsToSearch.length; i++) {
+			if (wordsToSearch[i] != null && !wordsToSearch[i].isEmpty()) {
+				page2 = wkt.getPageForWord(wordsToSearch[i]);
+				List<IWiktionaryEntry> entries2 = null;
+				if (page2 != null) {
+					entries2 = page2.getEntries();
+				}
+				IWiktionaryEntry entry2 = null;
+				if (entries2 != null) {
+					entry2 = entries2.get(0);
+					List<String> listOfPronunciations2 = null;
+					listOfPronunciations2 = returnPronunciationForAllCasesSingleWordOrMore(entry2.getPronunciations());
+					if (listOfPronunciations2 != null && !listOfPronunciations2.isEmpty()) {
+						/*
+						 * The following line will not add the elments to
+						 * listOfListsOfPronun. It will only add a reference to
+						 * listOfListsOfPronun.
+						 * listOfListsOfPronun.add(listOfPronunciations2);
+						 */
+						listOfListsOfPronun.add(new ArrayList<String>(listOfPronunciations2));
+						// listOfPronunciations2.forEach(p ->
+						// listOfPronunciations.add(p));
+						// listOfPronunciations.addAll(listOfPronunciations2);//appends.
 					}
 				}
-		 }
-		 if(usagesList!= null && usagesList.size() > 0){
-			 System.out.println("Found following usage(s) for " + wordToSearch + ":");
-			 usagesList.forEach(usage -> System.out.println(usage));
-		 }else{
-			 System.out.println("Found no usage(s) for " + wordToSearch + ".");
 			}
-	}//method printUsages ends here.
+		}
+	}// method giveListOfListsOfPronunciations ends here.
+
+	private void pronounceSingleWord(IWiktionaryEntry entry) {
+		List<String> listOfPronunciations = null;
+		listOfPronunciations = returnPronunciationForAllCasesSingleWordOrMore(entry.getPronunciations());
+		if (listOfPronunciations.size() > 0) {
+			listOfPronunciations.forEach(p -> System.out.println(p));
+		} else {
+			System.out.println("No pronuncation found for (" + entry.getWord() + ").");
+		}
+	}
+
+	private List<String> returnPronunciationForAllCasesSingleWordOrMore(List<IPronunciation> pronunciation) {
+		List<String> pronunciationsList = new ArrayList<>();
+		if (pronunciation != null && pronunciation.size() > 0) {
+			pronunciation.forEach(p -> {
+				if(p != null && p.getText().trim().length() > 0){
+					String temp1 = p.getText().trim();
+					String temp2 = "";
+					if(temp1.contains("/")){
+						temp2 = temp1.substring(temp1.indexOf("/") + 1);
+					}
+					if(!temp2.isEmpty() && temp2.contains("/")){
+						temp2 = temp2.substring(0, temp2.indexOf("/"));
+						pronunciationsList.add(new String(temp2));
+					}else{
+						pronunciationsList.add(new String(temp1));
+					}
+				}
+			});
+		}else{
+			/* Substituting the missing word in a clause with ???? in the position of that word. */
+			pronunciationsList.add(new String("?????"));
+		}
+		return pronunciationsList;
+	}// method returnPronunciationForAllCasesSingleWordOrMore ends here.
+
+	private void printUsages(String wordToSearch, List<IWikiString> usagesOfTheWordToSearch) {
+		List<String> usagesList = new ArrayList<>();
+		if (usagesOfTheWordToSearch != null && usagesOfTheWordToSearch.size() > 0) {
+			for (IWikiString entryExample : usagesOfTheWordToSearch) {
+				if (entryExample != null && !"".equals(entryExample)) {
+					String temp = entryExample.getPlainText().trim();
+					usagesList.add(temp);
+				}
+			}
+		}
+		if (usagesList != null && usagesList.size() > 0) {
+			// System.out.println("Found following usage(s) for " + wordToSearch
+			// + ":");
+			usagesList.forEach(usage -> System.out.println(usage));
+		} else {
+			System.out.println("Found no usage(s) for " + wordToSearch + ".");
+		}
+	}// method printUsages ends here.
 
 	private void printMeanings(IWiktionaryEntry entry, String wordToSearch) {
 		List<String> meanings = new ArrayList<String>();
-		for (IWiktionarySense sense : entry.getSenses())
-		{
-			 String str = WiktionaryFormatter.instance().formatHeader(sense);
-			 str = str.substring(str.indexOf("]") + 2).trim();
-			 if(str != null && !str.isEmpty())
-				 meanings.add(str);
+		for (IWiktionarySense sense : entry.getSenses()) {
+			String str = WiktionaryFormatter.instance().formatHeader(sense);
+			str = str.substring(str.indexOf("]") + 2).trim();
+			if (str != null && !str.isEmpty())
+				meanings.add(str);
 		}
 		System.out.println("Meaning(s)/Sense(s) of " + wordToSearch + " are: ");
 		meanings.forEach(m -> System.out.println(m));
-	}//method printMeaning ends here.
+	}// method printMeaning ends here.
 
 	private void printSyntacticFuntion(IWiktionaryEdition wkt, String wordToSearch,
 			List<IWiktionaryEntry> entriesOnThisPage) {
-		
+
 		List<String> syntacticFunctions = new ArrayList<String>();
-		
-		if(entriesOnThisPage.size() > 0){
-			for (IWiktionaryEntry entry : entriesOnThisPage){
+
+		if (entriesOnThisPage.size() > 0) {
+			for (IWiktionaryEntry entry : entriesOnThisPage) {
 				String str = WiktionaryFormatter.instance().formatHeader(entry);
 				String language = str.substring(str.indexOf("(") + 1, str.indexOf(","));
-				if("English".equals(language)){
+				if ("English".equals(language)) {
 					str = str.substring(str.indexOf(",") + 2, str.lastIndexOf(")"));
-				}else{
+				} else {
 					str = "";
 				}
-				if(str != null && !str.isEmpty()){
-					//Changing from NOUN to Noun, for example.
-					str = str.substring(0,1).toUpperCase() + str.substring(1).toLowerCase();
+				if (str != null && !str.isEmpty()) {
+					// Changing from NOUN to Noun, for example.
+					str = str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
 					syntacticFunctions.add(str);
 				}
 			}
-			//Making a hashshet from the list to remove repetitions.
+			// Making a hashshet from the list to remove repetitions.
 			Set<String> hs = new HashSet<String>(syntacticFunctions);
 			syntacticFunctions.clear();
 			syntacticFunctions.addAll(hs);
 			syntacticFunctions.forEach(sf -> System.out.println(wordToSearch + " is " + sf));
 		}
-	}//method printSyntacticFunction ends here.
+	}// method printSyntacticFunction ends here.
 
 }// class SearchWordInWikitionary ends here.
 
 /*
- 		//IWiktionaryCollection iwc = JWKTL.openCollection(parsedDump);
- //		// Query by word form (case insensitive). For case sensitive pass only the frist argument and not the boolean one.
-//		List<IWiktionaryEntry> entries = wkt.getEntriesForWord(wordToSearch, true);
-//		if(entries != null && entries.size() > 0){
-//			for (IWiktionaryEntry entry : entries)
-//			  System.out.println(WiktionaryFormatter.instance().formatHeader(entry));
-//
-//		} 
+ * //IWiktionaryCollection iwc = JWKTL.openCollection(parsedDump); // // Query
+ * by word form (case insensitive). For case sensitive pass only the frist
+ * argument and not the boolean one. // List<IWiktionaryEntry> entries =
+ * wkt.getEntriesForWord(wordToSearch, true); // if(entries != null &&
+ * entries.size() > 0){ // for (IWiktionaryEntry entry : entries) //
+ * System.out.println(WiktionaryFormatter.instance().formatHeader(entry)); // //
+ * }
+ */
+
+/*
+ * // // Access first sense. // IWiktionarySense sense = entry.getSense(1); //
+ * System.out.println(WiktionaryFormatter.instance().formatHeader(sense)); // //
+ * // Access second sense. // sense = entry.getSense(2); //
+ * System.out.println(WiktionaryFormatter.instance().formatHeader(sense));
+ */
+
+/*
+ * // languageISO639_3Code =
+ * entry.getPage().getEntryLanguage().getISO639_3().toString(); // pageLanuage =
+ * entry.getPage().getEntryLanguage().toString(); // System.out.println(
+ * "ISO639_3Code for the language of the page with (" + wordToSearch.trim() +
+ * ") : " + languageISO639_3Code); // System.out.println(
+ * "Language of the page with (" + wordToSearch.trim() + ") : " + pageLanuage);
+ * // // System.out.println(""); //
  */
