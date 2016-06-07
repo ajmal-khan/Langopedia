@@ -9,14 +9,23 @@ import de.tudarmstadt.ukp.jwktl.api.IWiktionaryEntry;
 import de.tudarmstadt.ukp.jwktl.api.IWiktionaryPage;
 
 public class ClausePronunciation {
-	List<Pronunciation> clausePronunciationList;
+	String pronunciationClause;
 
 	public ClausePronunciation() {
-		clausePronunciationList = new ArrayList<>();
+		pronunciationClause = "";
 	}// constructor ends here.
 
+	private String getPronunciationClause() {
+		return pronunciationClause;
+	}
+
+	public void setPronunciationClause(String pronunciationClause) {
+		this.pronunciationClause = pronunciationClause;
+	}
+
 	public void createPronunciationForClause(String clause, IWiktionaryEdition wkt) {
-		makeClausePronunciationList(clause, wkt);
+		List<Pronunciation> clausePronunciationList = new ArrayList<>();
+		clausePronunciationList = makeClausePronunciationList(clause, wkt);
 		List<Stack<String>> listOfStacks = giveListOfStacks(clausePronunciationList);
 		int numSentences = getSizeOfStackWithMaxPronunciations(listOfStacks);
 		String allLines = "";
@@ -24,10 +33,11 @@ public class ClausePronunciation {
 			String ithLine = printOneLineFromStacks(listOfStacks);
 			allLines += ithLine + "\n";
 		}
-		System.out.println(allLines);
+		this.setPronunciationClause(allLines);
 	}// method createPronunciationForClause ends here.
 
-	private void makeClausePronunciationList(String clause, IWiktionaryEdition wkt) {
+	private List<Pronunciation> makeClausePronunciationList(String clause, IWiktionaryEdition wkt) {
+		List<Pronunciation> clausePronunciationList = new ArrayList<>();
 		if (clause != null && !clause.isEmpty() && clause.contains(" ")) {
 			String[] wordsToSearch = clause.trim().split(" ");
 			for (String word : wordsToSearch) {
@@ -51,6 +61,7 @@ public class ClausePronunciation {
 				}
 			}
 		}
+		return clausePronunciationList;
 	}// method makeClausePronunciationList ends here.
 
 	private String printOneLineFromStacks(List<Stack<String>> listOfStacks) {
@@ -72,7 +83,6 @@ public class ClausePronunciation {
 	}// method printOneLineFromStacks ends here.
 
 	private int getSizeOfStackWithMaxPronunciations(List<Stack<String>> listOfStacks) {
-		// TODO Auto-generated method stub
 		int size = 0;
 		for (Stack<String> stack : listOfStacks) {
 			size = stack.size() > size ? stack.size() : size;
@@ -96,4 +106,21 @@ public class ClausePronunciation {
 		return listOfStacks;
 	}// method giveListOfStacks ends here.
 
+	public String toString(){
+		if(this.getPronunciationClause() != null && !this.getPronunciationClause().isEmpty()){
+			return this.getPronunciationClause();
+		}
+		else{
+			return "????";
+		}
+	}
+	
+	public void printClausePronunciation(){
+		if(this.toString().contains("????")){
+			System.out.println("No pronunciation found!");
+		}else{
+			System.out.println(this.toString());
+		}
+	}
+	
 }// class ClausePronunciation ends here.

@@ -21,9 +21,10 @@ public class MyDictionary {
 			System.out.println("Bye bye");
 		} else {
 			SearchWordInWikitionary swiw = new SearchWordInWikitionary();
-			swiw.searchInWiktionary(input);
+			PresentedText output = swiw.searchInWiktionary(input);
 			System.out.println("\n\n\n\n");
-			System.out.println("Ready again!!!!!!!!\n\n");
+			output.print();
+			System.out.println("\n\nReady again!!!!!!!!\n\n");
 		}
 	}//method checkInputInWiktionary ends here.
 

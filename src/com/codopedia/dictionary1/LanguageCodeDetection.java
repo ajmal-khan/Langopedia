@@ -12,7 +12,7 @@ import net.arnx.jsonic.JSONException;
 
 public class LanguageCodeDetection {
 	
-	//String profileDirectory = "/profiles/";
+	//String profileDirectory = "/profiles/"; relative directory ?
 	String profileDirectory = "/Users/macbookproretina/Dropbox/code/MacMachine/javaCore/JohnSonmezMine/Langopedia/profiles/";
 	String textToDetect = "";
 	
@@ -28,29 +28,29 @@ public class LanguageCodeDetection {
 		} catch (LangDetectException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void init(String profileDriectory) throws LangDetectException{
-		DetectorFactory.loadProfile(profileDirectory);
-	}
-
-	public String getTextToDetect() {
-		return textToDetect;
-	}
-
-	public void setTextToDetect(String textToDetect) {
-		this.textToDetect = textToDetect;
-	}
+	}//constructor ends here.
 	
 	public ArrayList<Language> detectPossibleLanguagesList() throws LangDetectException{
 		Detector detector = DetectorFactory.create();
-		detector.append(textToDetect);
+		detector.append(this.getTextToDetect());
 		return detector.getProbabilities();
 	}
 	
 	public String detectLanguageOfHighestProbability() throws LangDetectException{
 		Detector detector = DetectorFactory.create();
-		detector.append(textToDetect);
+		detector.append(this.getTextToDetect());
 		return detector.detect();
+	}
+	
+	private void init(String profileDriectory) throws LangDetectException{
+		DetectorFactory.loadProfile(profileDirectory);
+	}
+
+	private String getTextToDetect() {
+		return textToDetect;
+	}
+
+	private void setTextToDetect(String textToDetect) {
+		this.textToDetect = textToDetect;
 	}
 }//class LanguagecodeDetection ends here.

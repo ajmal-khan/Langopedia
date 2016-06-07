@@ -11,10 +11,20 @@ import com.cybozu.labs.langdetect.Language;
 public class DetectLanguage {
 	private List<Language> possibleLanguagesAL;
 	private String language;
+	private String languageCode;
 	
 	public DetectLanguage (){
 		possibleLanguagesAL = new ArrayList<>();
 		language = "";
+		languageCode = "";
+	}
+
+	private String getLanguageCode() {
+		return languageCode;
+	}
+
+	private void setLanguageCode(String languageCode) {
+		this.languageCode = languageCode;
 	}
 
 	private List<Language> getPossibleLanguagesAL() {
@@ -40,11 +50,18 @@ public class DetectLanguage {
 			List<Language> possibleLangList = langCodeDetecter.detectPossibleLanguagesList();
 			setPossibleLanguagesAL(possibleLangList);
 			String languageCode = langCodeDetecter.detectLanguageOfHighestProbability();
+			this.setLanguageCode(languageCode);
 			LanguageFromCode lfc = new LanguageFromCode();
 			setLanguage(lfc.getMeLanguageFromCode(languageCode));
 		} catch (LangDetectException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}//method detectLanguage ends here.
+	public String toString(){
+		String str = "";
+		str += "Language: " + this.getLanguage() + " " + 
+				"(" + this.getLanguageCode() + ").";
+		return str;
+	}//method toString ends here.
 }

@@ -14,21 +14,33 @@ import de.tudarmstadt.ukp.jwktl.api.WiktionaryFormatter;
 public class SyntacticFunction {
 	protected String wordToSearch;
 	protected String language;
+	protected String syntacticFunctions;
 	/*
 	 * A word can have many grammatical functions. For example, a word can be a
 	 * word as well as a noun.
 	 */
-	protected List<String> syntacticFunctions;
+	protected List<String> syntacticFunctionsList;
 
-	// constructor with no argument.
-	public SyntacticFunction() {
-		this("");
+	public List<String> getSyntacticFunctionsList() {
+		return syntacticFunctionsList;
 	}
-	public SyntacticFunction(String wordToSearch) {
-		syntacticFunctions = new ArrayList<>();
-		this.setWordToSearch(wordToSearch);
+
+	public void setSyntacticFunctionsList(List<String> syntacticFunctionsList) {
+		this.syntacticFunctionsList = syntacticFunctionsList;
+	}
+
+	public void setSyntacticFunctions(String syntacticFunctions) {
+		this.syntacticFunctions = syntacticFunctions;
+	}
+
+	// constructor
+	public SyntacticFunction(IWiktionaryEntry entry) {
+		syntacticFunctionsList = new ArrayList<>();
+		syntacticFunctions = "";
+		this.setWordToSearch(entry.getWord().trim());
 		setLanguage("English");
 	}
+
 	private String giveOne(Stack<String> stack) {
 		if (!stack.isEmpty()) {
 			if (stack.size() >= 2) {
@@ -40,7 +52,7 @@ public class SyntacticFunction {
 		return "????";
 	}
 
-	public String getLanguage() {
+	private String getLanguage() {
 		return language;
 	}
 
@@ -48,20 +60,20 @@ public class SyntacticFunction {
 		this.language = language;
 	}
 
-	public String getWordToSearch() {
+	private String getWordToSearch() {
 		return wordToSearch;
 	}
 
-	public void setWordToSearch(String wordToSearch) {
+	private void setWordToSearch(String wordToSearch) {
 		this.wordToSearch = wordToSearch;
 	}
 
-	public List<String> getSyntacticFunctions() {
-		return syntacticFunctions;
+	private List<String> getSyntacticFunctions() {
+		return syntacticFunctionsList;
 	}
 
 	private void setSyntacticFunctions(List<String> syntacticFunctions) {
-		this.syntacticFunctions = syntacticFunctions;
+		this.syntacticFunctionsList = syntacticFunctions;
 	}
 
 	public void findSyntacticFuntions(IWiktionaryEdition wkt) {
@@ -83,12 +95,12 @@ public class SyntacticFunction {
 				syntacticFunctionsForThisLanguage(langToCheck, partOfSpeechForThisEntry, sfLocal);
 			}
 			removeRepititionsFromList(sfLocal);
-		} 
+		}
 		this.setSyntacticFunctions(sfLocal);
-	}//method findSyntacticFuntions ends here.
+	}// method findSyntacticFuntions ends here.
 
-	private void syntacticFunctionsForThisLanguage(String langToCheck, String partOfSpeechThisEntry, List<String> sfLocal) {
-		// TODO Auto-generated method stub
+	private void syntacticFunctionsForThisLanguage(String langToCheck, String partOfSpeechThisEntry,
+			List<String> sfLocal) {
 		if (this.getLanguage().equals(langToCheck)) {
 			partOfSpeechThisEntry = partOfSpeechThisEntry.substring(partOfSpeechThisEntry.indexOf(",") + 2,
 					partOfSpeechThisEntry.lastIndexOf(")"));
@@ -105,16 +117,18 @@ public class SyntacticFunction {
 
 	private void removeRepititionsFromList(List<String> someList) {
 		// TODO Auto-generated method stub
-		/* Making a hashset from the list someList to remove repetitions from it. 
-		 * The order of items is disturbed but here order is not important.
+		/*
+		 * Making a hashset from the list someList to remove repetitions from
+		 * it. The order of items is disturbed but here order is not important.
 		 */
 		Set<String> hs = new HashSet<String>(someList);
 		someList.clear();// Emptying the list as it has repitions.
-		someList.addAll(hs);// Making list from the hash set that has no repititions. */
+		someList.addAll(hs);// Making list from the hash set that has no
+							// repititions. */
 	}
 
 	public String toString() {
-		String sf = "The syntactic function(s) of (" + this.getWordToSearch() + ") : ";
+		String sf = "";
 		if (getSyntacticFunctions() != null && !getSyntacticFunctions().isEmpty()) {
 			Stack<String> stack = new Stack<String>();
 			getSyntacticFunctions().forEach(listItem -> stack.push(new String(listItem)));
@@ -127,11 +141,16 @@ public class SyntacticFunction {
 			} else {
 				sf += "";// Just for the sake of completion. Never executed.
 			}
-		} else if (getSyntacticFunctions() == null || getSyntacticFunctions().isEmpty()) {
-			sf += "????";// The string ???? means syntactical function was not
-							// found.
 		}
-		return sf;
+		/* The string ???? means syntactical function was not found. */
+		return (sf != null && !sf.isEmpty()) ? sf : "????";
 	}// method toString() ends here.
 
+	public void printSF() {
+		if (this.toString().contains("????")) {
+			System.out.println("Syntactic Function not found!");
+		} else {
+			System.out.println(this.toString());
+		}
+	}
 }// class SyntacticFunction ends here.

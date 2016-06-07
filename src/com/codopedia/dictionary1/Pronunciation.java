@@ -80,13 +80,26 @@ public class Pronunciation {
 		setPhoneticTranscription(entry);
 		setSoundFileAddress(""); // To Do
 	}
-
-	public void printPronunciationSingleWord() {
+	
+	public String toString() {
+		String pt = "";
 		List<String> phoneticTranscription = getPhoneticTranscription();
 		if (phoneticTranscription != null && !phoneticTranscription.isEmpty()) {
-			phoneticTranscription.forEach(p -> System.out.println(p));
+			for (String p : phoneticTranscription) {
+				pt += p + "\n";
+			}
 		} else {
-			System.out.println("No pronuncation found for (" + getWordToSearch() + ").");
+			pt += "????";
+			//pt += "No pronuncation found for (" + getWordToSearch() + ").";
 		}
+		return pt;
 	}// method printPronunciationSingleWord ends here.
+	
+	public void printPronunciationSingleWord(){
+		if(this.toString().contains("????")){
+			System.out.println("No pronuncation found for (" + getWordToSearch() + ").");
+		}else{
+			System.out.println(this.toString());
+		}
+	}
 }// class Pronunciation ends here.
